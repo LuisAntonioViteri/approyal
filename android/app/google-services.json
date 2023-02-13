@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "716539743857",
+    "project_id": "approyalserver",
+    "storage_bucket": "approyalserver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716539743857:android:54fe2aab28bc3ecd88d5d0",
+        "android_client_info": {
+          "package_name": "com.example.approyal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716539743857-k18lnipmtnrn8s0bk4nmge86hj2btsf5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-L0g81Mmn14vAmbwjnTOz0dmXcmoF618"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "716539743857-k18lnipmtnrn8s0bk4nmge86hj2btsf5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
