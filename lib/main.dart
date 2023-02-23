@@ -1,3 +1,4 @@
+import 'package:approyal/constants/routes.dart';
 import 'package:approyal/views/login_view.dart';
 import 'package:approyal/views/register_view.dart';
 import 'package:approyal/views/verify_email_view.dart';
@@ -5,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'dart:developer' as devtools show log;
 import 'firebase_options.dart';
 
 void main() {
@@ -18,8 +18,11 @@ void main() {
       ),
       home: const HomePage(),
       routes: {
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegisterView(),
+        // each route is defined as a constant in /constants/routes
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        productsRoute: (context) => const ProductsView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
       },
     ),
   );
@@ -42,14 +45,11 @@ class HomePage extends StatelessWidget {
               if (user.emailVerified) {
                 return const ProductsView();
               } else {
-                //return const VerifyEmailView(); Add this on production
-                return const ProductsView();
+                return const VerifyEmailView();
               }
             } else {
               return const LoginView();
             }
-            return const LoginView();
-
           default:
             return const CircularProgressIndicator();
         }
@@ -82,7 +82,7 @@ class _ProductsViewState extends State<ProductsView> {
                   if (shouldLogout) {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/login/',
+                      loginRoute,
                       (route) => false,
                     );
                   }
@@ -106,6 +106,7 @@ class _ProductsViewState extends State<ProductsView> {
   }
 }
 
+// Show logout dialog confirmation and returns a boolean
 Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog<bool>(
     context: context,
