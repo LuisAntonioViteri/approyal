@@ -1,6 +1,6 @@
 import 'package:approyal/constants/routes.dart';
-import 'package:approyal/services/auth/auth_exceptions.dart';
-import 'package:approyal/services/auth/auth_service.dart';
+import 'package:approyal/services/services/auth/auth_exceptions.dart';
+import 'package:approyal/services/services/auth/auth_service.dart';
 import 'package:approyal/utilities/show_error_dialog.dart';
 import 'package:flutter/material.dart';
 

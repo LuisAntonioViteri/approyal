@@ -1,12 +1,12 @@
-import 'package:approyal/services/auth/auth_provider.dart';
-import 'package:approyal/services/auth/auth_exceptions.dart';
-import 'package:approyal/services/auth/auth_user.dart';
+import 'package:approyal/services/services/auth/auth_provider.dart';
+import 'package:approyal/services/services/auth/auth_exceptions.dart';
+import 'package:approyal/services/services/auth/auth_user.dart';
 
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 import 'package:firebase_core/firebase_core.dart';
 
-import '../../firebase_options.dart';
+import '../../../firebase_options.dart';
 
 class FirebaseAuthProvider extends AuthProvider {
   @override

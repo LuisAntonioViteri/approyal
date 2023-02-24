@@ -1,4 +1,4 @@
-import 'package:approyal/services/auth/auth_user.dart';
+import 'package:approyal/services/services/auth/auth_user.dart';
 import 'package:flutter/rendering.dart';
 
 abstract class AuthProvider {
