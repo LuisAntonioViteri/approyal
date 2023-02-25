@@ -20,8 +20,16 @@ class ProductService {
   List<DatabaseOrder> _orders = [];
   List<DatabaseDetalleOrden> _detalle = [];
 
+  static final ProductService _shared = ProductService._sharedInstance();
+  ProductService._sharedInstance();
+  factory ProductService() => _shared;
+
   final _productsStreamController =
       StreamController<List<DatabaseProducts>>.broadcast();
+
+  Stream<List<DatabaseProducts>> get allProducts =>
+      _productsStreamController.stream;
+
   final _orderStreamController =
       StreamController<List<DatabaseOrder>>.broadcast();
   final _detalleStreamController =
@@ -77,6 +85,7 @@ class ProductService {
 
   Future<DatabaseDetalleOrden> updateDetalleOrder(
       {required int detalleId, required DatabaseDetalleOrden udetalle}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final updatesCount = await db.update(
@@ -105,6 +114,7 @@ class ProductService {
 
   Future<Iterable<DatabaseDetalleOrden>> getAllDetalleFromOrder(
       {required DatabaseOrder order}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final dbOrder = await getOrden(id: order.id);
@@ -123,6 +133,7 @@ class ProductService {
   }
 
   Future<DatabaseDetalleOrden> getDetalle({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
       detalleTable,
@@ -142,6 +153,7 @@ class ProductService {
   }
 
   Future<void> deleteAllOrdenDetalle({required int orderId}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedDetlles = await db.delete(
       detalleTable,
@@ -157,6 +169,7 @@ class ProductService {
   }
 
   Future<void> deleteDetalle({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedDetalle = await db.delete(
       detalleTable,
@@ -174,6 +187,7 @@ class ProductService {
   Future<DatabaseDetalleOrden> createDetalle(
       {required DatabaseOrder order,
       required DatabaseDetalleOrden detalle}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     //make sure  owner exist in the db with the correct id
@@ -218,6 +232,7 @@ class ProductService {
 
   Future<DatabaseOrder> updateOrder(
       {required int orderId, required DatabaseOrder uorder}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final updatesCount = await db.update(
@@ -249,6 +264,7 @@ class ProductService {
 
   Future<Iterable<DatabaseOrder>> getAllOrdersFromUser(
       {required DatabaseUser owner}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final dbUser = await getUser(email: owner.email);
@@ -267,6 +283,7 @@ class ProductService {
   }
 
   Future<DatabaseOrder> getOrden({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
       productTable,
@@ -286,6 +303,7 @@ class ProductService {
   }
 
   Future<void> deleteOrder({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     await deleteAllOrdenDetalle(orderId: id);
     final deletedOrder = await db.delete(
@@ -304,6 +322,7 @@ class ProductService {
 
   Future<DatabaseOrder> createOrder(
       {required DatabaseOrder order, required DatabaseUser owner}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     //make sure  owner exist in the db with the correct id
@@ -354,6 +373,7 @@ class ProductService {
 
   Future<DatabaseProducts> updateProduct(
       {required int productId, required DatabaseProducts uproduct}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final updatesCount = await db.update(
@@ -383,6 +403,7 @@ class ProductService {
   }
 
   Future<Iterable<DatabaseProducts>> getAllProducts() async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final products = await db.query(productTable);
 
@@ -390,6 +411,7 @@ class ProductService {
   }
 
   Future<DatabaseProducts> getProduct({required int productId}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
       productTable,
@@ -409,6 +431,7 @@ class ProductService {
   }
 
   Future<void> deleteProduct({required int productId}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedproduct = await db.delete(
       userTable,
@@ -425,6 +448,7 @@ class ProductService {
 
   Future<DatabaseProducts> createProduct(
       {required DatabaseProducts product}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
       productTable,
@@ -463,6 +487,7 @@ class ProductService {
 
 //Crud for UserTable
   Future<DatabaseUser> getUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
       userTable,
@@ -479,6 +504,7 @@ class ProductService {
   }
 
   Future<void> deleteUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedAcount = await db.delete(
       userTable,
@@ -488,6 +514,7 @@ class ProductService {
   }
 
   Future<DatabaseUser> createUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
       userTable,
@@ -507,6 +534,12 @@ class ProductService {
       id: userId,
       email: email,
     );
+  }
+
+  Future<void> _ensureDbIsOpen() async {
+    try {
+      await open();
+    } on DatabaseAlreadyOpenException {}
   }
 
   Future<void> open() async {

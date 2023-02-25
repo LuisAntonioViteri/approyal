@@ -1,4 +1,5 @@
 import 'package:approyal/services/services/auth/auth_service.dart';
+import 'package:approyal/services/services/sqlite/db_service.dart';
 import 'package:flutter/material.dart';
 import '../constants/routes.dart';
 import '../enums/menu_action.dart';
@@ -11,6 +12,22 @@ class ProductsView extends StatefulWidget {
 }
 
 class _ProductsViewState extends State<ProductsView> {
+  late final ProductService _productService;
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+
+  @override
+  void initState() {
+    _productService = ProductService();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _productService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +61,27 @@ class _ProductsViewState extends State<ProductsView> {
           )
         ],
       ),
-      body: const Text('Hello world'),
+      body: FutureBuilder(
+        future: _productService.getOrCreateUser(email: userEmail),
+        builder: ((context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return StreamBuilder(
+                stream: _productService.allProducts,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text('Waiting for all notes');
+                    default:
+                      return const CircularProgressIndicator();
+                  }
+                },
+              );
+            default:
+              return const Text('Hello');
+          }
+        }),
+      ),
     );
   }
 }
