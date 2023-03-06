@@ -19,13 +19,20 @@ class ProductService {
   List<DatabaseProducts> _products = [];
   List<DatabaseOrder> _orders = [];
   List<DatabaseDetalleOrden> _detalle = [];
-
+//Create a shared instance to avoid creating always a new instance of product service
   static final ProductService _shared = ProductService._sharedInstance();
-  ProductService._sharedInstance();
+  ProductService._sharedInstance() {
+    _productsStreamController =
+        StreamController<List<DatabaseProducts>>.broadcast(
+      onListen: () {
+        //Listen to a new listener suscribed to our stream controller
+        _productsStreamController.sink.add(_products);
+      },
+    );
+  }
   factory ProductService() => _shared;
 
-  final _productsStreamController =
-      StreamController<List<DatabaseProducts>>.broadcast();
+  late final StreamController<List<DatabaseProducts>> _productsStreamController;
 
   Stream<List<DatabaseProducts>> get allProducts =>
       _productsStreamController.stream;
@@ -556,7 +563,14 @@ class ProductService {
       await db.execute(createUserTable);
       //create product table
       await db.execute(createProductTable);
+      //create order table
+      await db.execute(createOrdenTable);
+      //create detalle orden table
+      await db.execute(createDetalleOrdenTable);
+      //Wait to retreive all cache data
       await _cacheProducts();
+      //await _cacheOrders(user: user);
+      //await _cacheDetalle(order: order);
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
     }

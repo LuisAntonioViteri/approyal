@@ -1,5 +1,4 @@
 import 'package:approyal/services/services/auth/auth_user.dart';
-import 'package:flutter/rendering.dart';
 
 abstract class AuthProvider {
   AuthUser? get currentUser;
