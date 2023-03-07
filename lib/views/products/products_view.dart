@@ -1,6 +1,7 @@
 import 'package:approyal/services/services/auth/auth_service.dart';
 import 'package:approyal/services/services/sqlite/db_service.dart';
 import 'package:approyal/services/services/sqlite/product_class.dart';
+import 'package:approyal/views/products/product_list_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../constants/routes.dart';
@@ -16,11 +17,12 @@ class ProductsView extends StatefulWidget {
 class _ProductsViewState extends State<ProductsView> {
   late final ProductService _productService;
   String get userEmail => AuthService.firebase().currentUser!.email!;
+  List<DatabaseProducts?> _carritoCompras = [];
 
   @override
   void initState() {
     _productService = ProductService();
-
+    //_carritoCompras = [];
     super.initState();
   }
 
@@ -42,31 +44,39 @@ class _ProductsViewState extends State<ProductsView> {
           },
         ),
         actions: [
-          PopupMenuButton<MenuAction>(
-            onSelected: (value) async {
-              switch (value) {
-                case MenuAction.logout:
-                  final shouldLogout = await showLogOutDialog(context);
-                  if (shouldLogout) {
-                    await AuthService.firebase().logOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      loginRoute,
-                      (route) => false,
-                    );
-                  }
-                  break;
-                default:
-              }
-            },
-            itemBuilder: (context) {
-              return const [
-                PopupMenuItem<MenuAction>(
-                  value: MenuAction.logout,
-                  child: Text('logout'),
-                ),
-              ];
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0, top: 8.0),
+            child: GestureDetector(
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  const Icon(
+                    Icons.shopping_cart,
+                    size: 38,
+                    color: Colors.white,
+                  ),
+                  if (_carritoCompras!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2.0),
+                      child: CircleAvatar(
+                        radius: 8.0,
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        child: Text(_carritoCompras!.length.toString(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 12.0)),
+                      ),
+                    ),
+                ],
+              ),
+              onTap: () {
+                if (_carritoCompras.isNotEmpty) {
+                  //Navigator.pushNamed(context, routeName)
+                }
+              },
+            ),
           )
+          //IconButton(onPressed: onPressed, icon: const Icon(Icons.cart),);
         ],
       ),
       body: FutureBuilder(
@@ -83,56 +93,10 @@ class _ProductsViewState extends State<ProductsView> {
                       if (snapshot.hasData) {
                         final allProducts =
                             snapshot.data as List<DatabaseProducts>;
-                        return GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1 / 1.25,
-                          ),
-                          itemCount: allProducts.length,
-                          itemBuilder: (context, index) {
-                            final producto = allProducts[index];
-                            return Card(
-                              elevation: 4.0,
-                              child: Stack(
-                                fit: StackFit.loose,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Expanded(
-                                          child: Image.asset(
-                                        'assets/images/Logo.jpeg',
-                                        fit: BoxFit.contain,
-                                      )),
-                                      Text(
-                                        producto.name,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(fontSize: 20.0),
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          const SizedBox(
-                                            height: 25,
-                                          ),
-                                          Text(
-                                            producto.price.toString(),
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 23.0,
-                                                color: Colors.black),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            );
+                        return ProductListView(
+                          products: allProducts,
+                          onAddToCart: (product) {
+                            _carritoCompras!.add(product);
                           },
                         );
                       } else {
@@ -153,26 +117,3 @@ class _ProductsViewState extends State<ProductsView> {
 }
 
 // Show logout dialog confirmation and returns a boolean
-Future<bool> showLogOutDialog(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Sign out'),
-        content: const Text('Estas seguro de que quieres cerrar sesion?'),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('Cancelar')),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text('Log Out')),
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
-}

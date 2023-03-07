@@ -1,3 +1,6 @@
+import 'package:approyal/constants/routes.dart';
+import 'package:approyal/services/services/auth/auth_service.dart';
+import 'package:approyal/utilities/dialogs/logout_dialog.dart';
 import 'package:approyal/views/Pago/formas_pago_view.dart';
 import 'package:approyal/views/products/list_products.dart';
 import 'package:approyal/views/products/new_product_view.dart';
@@ -6,6 +9,8 @@ import 'package:flutter/material.dart';
 
 class ProfileMenuView extends StatelessWidget {
   const ProfileMenuView({super.key});
+
+  String get userEmail => AuthService.firebase().currentUser!.email!;
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +21,14 @@ class ProfileMenuView extends StatelessWidget {
           color: Colors.white,
           child: ListView(
             padding: const EdgeInsets.only(top: 50.0),
-            children: <Widget>[
+            children: [
               const SizedBox(
                 height: 75,
                 width: 100,
                 child: UserAccountsDrawerHeader(
                   accountName: Text(''),
                   accountEmail: Text(''),
+                  //margin: EdgeInsets.symmetric({double vertical: 10.00 ,double horizontal: 10.00}),
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.contain,
@@ -105,6 +111,28 @@ class ProfileMenuView extends StatelessWidget {
                       builder: (BuildContext context) =>
                           (const ListaProductos())))),
 
+              const Divider(),
+              ListTile(
+                title: const Text(
+                  'Log out',
+                  style: TextStyle(color: Colors.black),
+                ),
+                trailing: const Icon(
+                  Icons.logout,
+                  size: 30.0,
+                  color: Colors.black,
+                ),
+                onTap: () async {
+                  final shouldLogout = await showLogOutDialog(context);
+                  if (shouldLogout) {
+                    await AuthService.firebase().logOut();
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      loginRoute,
+                      (route) => false,
+                    );
+                  }
+                },
+              ),
               const Divider(),
             ],
           ),

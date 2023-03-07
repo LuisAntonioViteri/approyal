@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: GestureDetector(
               child: Stack(
                 alignment: Alignment.topCenter,
-                children: <Widget>[
+                children: [
                   const Icon(
                     Icons.shopping_cart,
                     size: 38,
