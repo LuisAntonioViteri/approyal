@@ -1,5 +1,5 @@
 import 'package:approyal/views/Navigation/profile_menu_view.dart';
-import 'package:approyal/views/Pago/formas_pago_view.dart';
+import 'package:approyal/views/Pago/forma_pago_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../constants/routes.dart';
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (_listaCarro.isNotEmpty) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => Cart(_listaCarro),
+                      builder: (context) => CartView(),
                     ),
                   );
                 }

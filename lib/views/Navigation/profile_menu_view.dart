@@ -1,9 +1,9 @@
 import 'package:approyal/constants/routes.dart';
 import 'package:approyal/services/services/auth/auth_service.dart';
 import 'package:approyal/utilities/dialogs/logout_dialog.dart';
-import 'package:approyal/views/Pago/formas_pago_view.dart';
+import 'package:approyal/views/Pago/forma_pago_view.dart';
 import 'package:approyal/views/products/list_products.dart';
-import 'package:approyal/views/products/new_product_view.dart';
+import 'package:approyal/views/products/create_update_product_view.dart';
 import 'package:approyal/views/products/products_view.dart';
 import 'package:flutter/material.dart';
 
@@ -93,7 +93,7 @@ class ProfileMenuView extends StatelessWidget {
                   ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) =>
-                          (const NewProductView())))),
+                          (const CreateUpdateNoteView())))),
 
               const Divider(),
 

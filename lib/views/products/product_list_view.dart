@@ -1,13 +1,12 @@
-import 'package:approyal/services/services/sqlite/product_class.dart';
+import 'package:approyal/services/cloud/cloud_product.dart';
 import 'package:approyal/views/products/custom_product_card_view.dart';
-import 'package:approyal/views/products/custom_product_tile_view.dart';
 
 import 'package:flutter/material.dart';
 
-typedef AddToCartCallBack = void Function(DatabaseProducts product);
+typedef AddToCartCallBack = void Function(CloudProduct product);
 
 class ProductListView extends StatelessWidget {
-  final List<DatabaseProducts> products;
+  final Iterable<CloudProduct> products;
 
   final AddToCartCallBack onAddToCart;
 
@@ -20,9 +19,10 @@ class ProductListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      scrollDirection: Axis.vertical,
       itemCount: products.length,
       itemBuilder: (context, index) {
-        final product = products[index];
+        final product = products.elementAt(index);
         return ProductCard(
           name: product.name,
           description: product.description,
