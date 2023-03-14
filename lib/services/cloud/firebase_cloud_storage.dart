@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:approyal/services/cloud/cloud_product.dart';
 import 'package:approyal/services/cloud/cloud_storage_constants.dart';
 import 'package:approyal/services/cloud/cloud_storage_exception.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseCloudStorage {
-  final products = FirebaseFirestore.instance.collection('products');
-  final orders = FirebaseFirestore.instance.collection('Order');
-  final detail = FirebaseFirestore.instance.collection('products');
+  final products = FirebaseFirestore.instance.collection('Productos');
+  final images = FirebaseStorage.instance.ref('ProductImages');
+  final orders = FirebaseFirestore.instance.collection('order');
+  final detail = FirebaseFirestore.instance.collection('detail');
 
   Future<void> deleteProduct({required String documentId}) async {
     try {
@@ -69,6 +70,7 @@ class FirebaseCloudStorage {
         productCategoryField: producto.category,
         productClasificationField: producto.clasification,
         productImageField: producto.picture,
+        productFrecuency: producto.frecuency
       });
     } catch (e) {
       CouldNotCreateProductException();

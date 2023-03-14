@@ -27,8 +27,7 @@ class ProductListView extends StatelessWidget {
           name: product.name,
           description: product.description,
           price: product.price,
-          imageUrl:
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkT3Ixe87Fm8AKUFfIhyiPAHjDGOcg7oezxg&usqp=CAU',
+          imageUrl: product.picture,
           onPressed: () {
             onAddToCart(product);
           },

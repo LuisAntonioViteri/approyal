@@ -1,3 +1,5 @@
+import 'package:approyal/services/cloud/cloud_detail.dart';
+import 'package:approyal/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
 
 import 'credito_directo_view.dart';
@@ -10,8 +12,41 @@ class ChequeDirecto extends StatefulWidget {
 }
 
 class _ChequeDirectoState extends State<ChequeDirecto> {
+  List<CloudDetail> carrito = [];
+  List<CloudDetail>? cart = [];
+  double precio = 0;
+  int ncheques = 1;
+  double interes = 0.01;
+  List<int> numcheques = [1, 2, 3, 4, 5];
+  List<double> cantintereses = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06];
+
+  void valorTotal(Iterable<CloudDetail> listaProductos) {
+    if (listaProductos.isEmpty) {
+      setState(() {
+        precio = 0;
+      });
+    }
+    double total = listaProductos
+        .map((element) => element.totalproducto)
+        .reduce((value, element) => value + element);
+
+    setState(() {
+      precio = total;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    cart = context.getArgument<List<CloudDetail>>();
+    carrito = cart!;
+    if (precio == 0) {
+      final double total = carrito
+          .map((element) => element.totalproducto)
+          .reduce((value, element) => value + element);
+      setState(() {
+        precio = total;
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cheque Directo'),
@@ -28,14 +63,14 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
               width: 400,
               color: const Color.fromARGB(255, 177, 177, 177),
               child: Row(
-                children: const <Widget>[
+                children: [
                   Text(
-                    'Total: ****,**',
-                    style: TextStyle(
+                    'Total: \$${precio.toStringAsFixed(2)}',
+                    style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 28.0,
                         color: Colors.black),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -77,24 +112,32 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       height: 50,
                       width: 30.0,
                       color: const Color.fromARGB(255, 168, 168, 168),
-                      child: DropdownButton<String>(
-                        value: 'Ch° 1',
-                        onChanged: (String? newValue) {
-                          // código para manejar el cambio de valor
-                        },
-                        items: <String>['Ch° 1', 'Ch° 2', 'Ch° 3', 'Ch° 4']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18.0,
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                            ),
-                          );
-                        }).toList(),
+                      child: Center(
+                        child: DropdownButton(
+                          value: ncheques,
+                          isExpanded: true,
+                          items: numcheques
+                              .map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              alignment: Alignment.center,
+                              value: value,
+                              child: Text(
+                                value.toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0,
+                                    color: Color.fromARGB(255, 0, 0, 0)),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value != null) {
+                                ncheques = value;
+                              }
+                            });
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -139,10 +182,10 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       height: 50,
                       width: 30.0,
                       color: const Color.fromARGB(255, 168, 168, 168),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          "***,**",
-                          style: TextStyle(
+                          (precio * 0.4).toStringAsFixed(2),
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                               color: Color.fromARGB(255, 0, 0, 0)),
@@ -191,10 +234,10 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       height: 50,
                       width: 30.0,
                       color: const Color.fromARGB(255, 168, 168, 168),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          "***,**",
-                          style: TextStyle(
+                          (precio * 0.6).toStringAsFixed(2),
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                               color: Color.fromARGB(255, 0, 0, 0)),
@@ -243,10 +286,10 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       height: 50,
                       width: 30.0,
                       color: const Color.fromARGB(255, 168, 168, 168),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          "***,**",
-                          style: TextStyle(
+                          ((precio * 0.6) * interes).toStringAsFixed(2),
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                               color: Color.fromARGB(255, 0, 0, 0)),
@@ -267,15 +310,17 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
               width: 400,
               color: const Color.fromARGB(255, 7, 77, 228),
               child: Row(
-                children: const <Widget>[
-                  Center(
-                      child: Text(
-                    'Total a pagar: ****,**',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25.0,
-                        color: Color.fromARGB(255, 255, 255, 255)),
-                  ))
+                children: [
+                  Expanded(
+                    child: Center(
+                        child: Text(
+                      'Total a pagar:\$${((precio * 0.6) * (1 + interes)).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25.0,
+                          color: Color.fromARGB(255, 255, 255, 255)),
+                    )),
+                  )
                 ],
               ),
             ),
@@ -317,10 +362,11 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       height: 50,
                       width: 30.0,
                       color: const Color.fromARGB(255, 168, 168, 168),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          "***,**",
-                          style: TextStyle(
+                          (((precio * 0.6) * (1 + interes)) / ncheques)
+                              .toStringAsFixed(2),
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                               color: Color.fromARGB(255, 0, 0, 0)),
@@ -348,11 +394,11 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       color: const Color.fromARGB(0, 188, 195, 209),
                       child: const Center(
                         child: Text(
-                          "Interes del: ",
+                          "Con interés al: ",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
-                              color: Color.fromARGB(255, 0, 0, 0)),
+                              color: Color.fromARGB(255, 5, 5, 5)),
                         ),
                       ),
                     ),
@@ -369,24 +415,30 @@ class _ChequeDirectoState extends State<ChequeDirecto> {
                       height: 50,
                       width: 30.0,
                       color: const Color.fromARGB(255, 168, 168, 168),
-                      child: DropdownButton<String>(
-                        value: '10%',
-                        onChanged: (String? newValue) {
-                          // código para manejar el cambio de valor
-                        },
-                        items: <String>['10%', '12%', '14%', '16%']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18.0,
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                            ),
-                          );
-                        }).toList(),
+                      child: Center(
+                        child: DropdownButton<double>(
+                          value: interes,
+                          items: cantintereses
+                              .map<DropdownMenuItem<double>>((double value) {
+                            return DropdownMenuItem<double>(
+                              value: value,
+                              child: Text(
+                                '${(value * 100).toStringAsFixed(0)} %',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0,
+                                    color: Color.fromARGB(255, 0, 0, 0)),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              if (newValue != null) {
+                                interes = newValue;
+                              }
+                            });
+                          },
+                        ),
                       ),
                     ),
                   ),

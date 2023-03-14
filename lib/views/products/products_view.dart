@@ -1,10 +1,7 @@
 import 'package:approyal/services/cloud/cloud_product.dart';
 import 'package:approyal/services/cloud/firebase_cloud_storage.dart';
 import 'package:approyal/services/services/auth/auth_service.dart';
-import 'package:approyal/services/services/sqlite/db_service.dart';
-import 'package:approyal/services/services/sqlite/product_class.dart';
 import 'package:approyal/views/products/product_list_view.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '../../constants/routes.dart';
 
@@ -18,12 +15,11 @@ class ProductsView extends StatefulWidget {
 class _ProductsViewState extends State<ProductsView> {
   late final FirebaseCloudStorage _productService;
   String get userId => AuthService.firebase().currentUser!.id;
-  late List<CloudProduct?> _carritoCompras;
+  List<CloudProduct?> _carritoCompras = [];
 
   @override
   void initState() {
     _productService = FirebaseCloudStorage();
-    //_carritoCompras = [];
     super.initState();
   }
 
@@ -69,9 +65,8 @@ class _ProductsViewState extends State<ProductsView> {
                   Navigator.of(context).pushNamed(
                     carritoRoute,
                     arguments:
-                        _carritoCompras.whereType<DatabaseProducts>().toList(),
+                        _carritoCompras.whereType<CloudProduct>().toList(),
                   );
-                  print(_carritoCompras);
                 }
               },
             ),
@@ -98,7 +93,7 @@ class _ProductsViewState extends State<ProductsView> {
                   },
                 );
               } else {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
             default:
               return const CircularProgressIndicator();

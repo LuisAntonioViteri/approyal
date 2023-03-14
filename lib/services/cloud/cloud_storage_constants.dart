@@ -6,7 +6,7 @@ const productPriceField = 'price';
 const productCategoryField = 'category';
 const productClasificationField = 'clasification';
 const productImageField = 'image';
-const productFrecuency = 'fecuency';
+const productFrecuency = 'frecuency';
 
 //Orders
 

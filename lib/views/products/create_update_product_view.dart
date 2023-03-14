@@ -1,8 +1,10 @@
-import 'dart:typed_data';
 import 'package:approyal/services/cloud/cloud_product.dart';
+import 'package:approyal/services/cloud/cloud_storage_exception.dart';
 import 'package:approyal/services/cloud/firebase_cloud_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({super.key});
@@ -13,13 +15,13 @@ class CreateUpdateNoteView extends StatefulWidget {
 
 class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   final _formKey = GlobalKey<FormState>();
-  late String _code;
-  late String _name;
-  late String _description;
-  late double _price = 0.0;
-  late String _category;
-  late String _clasification;
-  late Uint8List _imageBytes;
+  String _code = '';
+  String _name = '';
+  String _description = '';
+  double _price = 0.0;
+  String _category = '';
+  String _clasification = '';
+  Uint8List _imageBytes = Uint8List(0);
 
   late CloudProduct _product;
   late final FirebaseCloudStorage _productService;
@@ -62,7 +64,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       category: category,
       clasification: clasification,
       picture: image,
-      frecuency: 0,
+      frecuency: 1,
     );
     await _productService.createNewProduct(producto: _product);
   }
@@ -80,20 +82,33 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
-                onTap: () async {
-                  final bytes = await ImageSelector().getImageBytes();
-                  setState(() {
-                    _imageBytes = bytes!;
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final bytes = await ImageSelector().getImageBytes();
+                      setState(() {
+                        _imageBytes = bytes!;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: _imageBytes.isEmpty
+                          ? Image.asset(
+                              'assets/images/add-image.png',
+                              width: 150,
+                              height: 150,
+                            )
+                          : Image.asset(
+                              'assets/images/add-image.png',
+                              width: 150,
+                              height: 150,
+                            ),
+                    ),
                   ),
-                  child: _imageBytes != null
-                      ? Image.memory(_imageBytes)
-                      : const Icon(Icons.add_a_photo),
                 ),
               ),
               TextFormField(
@@ -190,27 +205,35 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                   _clasification = value!;
                 },
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        if (_imageBytes.isEmpty) {
+                          final ByteData assetImage = await rootBundle
+                              .load('assets/images/add-image.png');
+                          _imageBytes = assetImage.buffer.asUint8List();
+                        }
 
-                      _saveProduct(
-                        _code,
-                        _name,
-                        _description,
-                        _price,
-                        _category,
-                        _clasification,
-                        _imageBytes,
-                      );
+                        _saveProduct(
+                          _code,
+                          _name,
+                          _description,
+                          _price,
+                          _category,
+                          _clasification,
+                          _imageBytes,
+                        );
 
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('Crear'),
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Crear'),
+                  ),
                 ),
               ),
             ],
@@ -223,20 +246,33 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
 class ImageSelector {
   Future<Uint8List?> getImageBytes() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource
-          .gallery, // You can also use ImageSource.camera to take a new picture with the camera
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 80,
-    );
-
-    if (pickedFile == null) {
-      return null;
+    try {
+      final status = await Permission.photos.request();
+      if (status.isGranted) {
+        final picker = ImagePicker();
+        final pickedFile = await picker.pickImage(
+          source: ImageSource
+              .gallery, // You can also use ImageSource.camera to take a new picture with the camera
+          maxWidth: 800,
+          maxHeight: 800,
+          imageQuality: 80,
+        );
+        if (pickedFile == null) {
+          final ByteData assetImage =
+              await rootBundle.load('assets/images/add-image.png');
+          final imageBytes = assetImage.buffer.asUint8List();
+          return imageBytes;
+        }
+        final bytes = await pickedFile.readAsBytes();
+        return Uint8List.fromList(bytes);
+      } else {
+        final ByteData assetImage =
+            await rootBundle.load('assets/images/add-image.png');
+        final imageBytes = assetImage.buffer.asUint8List();
+        return imageBytes;
+      }
+    } catch (e) {
+      throw CouldNotCreateProductImageException();
     }
-
-    final bytes = await pickedFile.readAsBytes();
-    return Uint8List.fromList(bytes);
   }
 }

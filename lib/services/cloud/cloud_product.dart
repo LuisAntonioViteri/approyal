@@ -35,6 +35,10 @@ class CloudProduct {
         price = snapshot.data()[productPriceField] as double,
         category = snapshot.data()[productCategoryField] as String,
         clasification = snapshot.data()[productClasificationField] as String,
-        picture = snapshot.data()[productImageField] as Uint8List,
-        frecuency = snapshot.data()[productFrecuency] as int;
+        picture = Uint8List.fromList(snapshot
+            .data()[productImageField]
+            .map((e) => e ?? 0)
+            .cast<int>()
+            .toList()),
+        frecuency = snapshot.data()[productFrecuency];
 }

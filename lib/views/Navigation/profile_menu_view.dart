@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class ProfileMenuView extends StatelessWidget {
   const ProfileMenuView({super.key});
 
-  String get userEmail => AuthService.firebase().currentUser!.email!;
+  String get userEmail => AuthService.firebase().currentUser!.email;
 
   @override
   Widget build(BuildContext context) {

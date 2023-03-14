@@ -1,7 +1,10 @@
 import 'package:approyal/constants/routes.dart';
 import 'package:approyal/services/services/auth/auth_service.dart';
 import 'package:approyal/views/Navigation/profile_menu_view.dart';
+import 'package:approyal/views/Pago/cheque_directo_view.dart';
+import 'package:approyal/views/Pago/credito_directo_view.dart';
 import 'package:approyal/views/Pago/forma_pago_view.dart';
+import 'package:approyal/views/Pago/tarjeta_credito_view.dart';
 import 'package:approyal/views/basket/pedido_lista.dart';
 import 'package:approyal/views/login_view.dart';
 import 'package:approyal/views/products/create_update_product_view.dart';
@@ -9,7 +12,6 @@ import 'package:approyal/views/products/products_view.dart';
 import 'package:approyal/views/register_view.dart';
 import 'package:approyal/views/verify_email_view.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,9 @@ void main() {
         createOrUpdateProductRoute: (context) => const CreateUpdateNoteView(),
         carritoRoute: (context) => const CartView(),
         resumenPagoRoute: (context) => const FormaPago(),
+        chequeRoute: (context) => const ChequeDirecto(),
+        creditoRoute: (context) => const CreditoDirecto(),
+        tarjetaCreditoRoute: (constext) => const TarjetaCredito(),
       },
     ),
   );

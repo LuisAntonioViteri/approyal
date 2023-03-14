@@ -1,10 +1,14 @@
+import 'dart:convert';
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
   final String name;
   final String description;
   final double price;
-  final String imageUrl;
+  final Uint8List imageUrl;
   final VoidCallback onPressed;
 
   const ProductCard({
@@ -27,7 +31,7 @@ class ProductCard extends StatelessWidget {
             child: SizedBox(
               height: 100.0,
               width: 200.0,
-              child: Image.network(
+              child: Image.memory(
                 imageUrl,
                 fit: BoxFit.contain,
               ),

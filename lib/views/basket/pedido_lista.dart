@@ -1,11 +1,8 @@
 import 'package:approyal/constants/routes.dart';
-import 'package:approyal/services/services/sqlite/constants.dart';
-import 'package:approyal/services/services/sqlite/detalleorden_class.dart';
-import 'package:approyal/services/services/sqlite/product_class.dart';
+import 'package:approyal/services/cloud/cloud_detail.dart';
+import 'package:approyal/services/cloud/cloud_product.dart';
 import 'package:approyal/utilities/generics/get_arguments.dart';
-import 'package:approyal/views/Pago/forma_pago_view.dart';
 import 'package:approyal/views/basket/car_list_view.dart';
-import 'package:approyal/views/products/products_view.dart';
 import 'package:flutter/material.dart';
 
 class CartView extends StatefulWidget {
@@ -16,33 +13,63 @@ class CartView extends StatefulWidget {
 }
 
 class _CartViewState extends State<CartView> {
+  late List<CloudProduct> cart = [];
+  late List<CloudDetail> detalle = [];
+  late List<CloudProduct>? carrito = [];
+  late double precio = 0;
+
+  void valorTotal(Iterable<CloudDetail> listaProductos) {
+    if (listaProductos.isEmpty) {
+      setState(() {
+        precio = 0;
+      });
+    }
+    double total = listaProductos
+        .map((element) => element.totalproducto)
+        .reduce((value, element) => value + element);
+
+    setState(() {
+      precio = total;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _carrito = context.getArgument<List<DatabaseProducts>>();
+    if (precio == 0) {
+      carrito = context.getArgument<List<CloudProduct>>();
+      cart = carrito!;
 
-    List<DatabaseProducts> cart = [];
-    List<DatabaseDetalleOrden> detalle = [];
-
-    String valorTotal(List<DatabaseDetalleOrden> listaProductos) {
-      double total = listaProductos
-          .map((element) => element.totalproducto)
-          .reduce((value, element) => value + element);
-
-      return total.toStringAsFixed(2);
-    }
-
-    if (_carrito != null) {
-      cart = _carrito;
-      detalle = cart.map((productos) {
-        return DatabaseDetalleOrden(
-          id: productos.id,
-          orderId: 1,
-          productId: productos.id,
+      detalle = cart.map((product) {
+        return CloudDetail(
+          documentId: '',
+          orderId: '',
+          productId: product.documentId,
           cantidad: 1,
-          totalproducto: productos.price,
-          isSyncedWithCloud: false,
+          totalproducto: product.price,
         );
       }).toList();
+      valorTotal(detalle);
+    }
+
+    Container pagoTotal(Iterable<CloudDetail> cart) {
+      return Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(left: 120),
+        height: 70,
+        width: 400,
+        color: Colors.grey[200],
+        child: Row(
+          children: [
+            Text(
+              'Total: \$${precio.toStringAsFixed(2)}',
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.0,
+                  color: Colors.black),
+            )
+          ],
+        ),
+      );
     }
 
     return Scaffold(
@@ -62,56 +89,38 @@ class _CartViewState extends State<CartView> {
           child: CartListView(
             products: cart,
             onChangedQuantity: (producto, quantity) {
-              if (cart.length == 1) {
+              if (cart.isEmpty) {
                 Navigator.of(context)
                     .pushNamed(productsRoute, arguments: false);
               }
-              DatabaseDetalleOrden detalleitem = DatabaseDetalleOrden(
-                id: producto.id,
-                orderId: 1,
-                productId: producto.id,
+              CloudDetail detalleitem = CloudDetail(
+                documentId: producto.documentId,
+                orderId: '',
+                productId: producto.documentId,
                 cantidad: quantity.toDouble(),
                 totalproducto: quantity * producto.price,
-                isSyncedWithCloud: false,
               );
               if (quantity == 0) {
                 setState(() {
                   cart.remove(producto);
                   detalle.removeWhere(
-                      (element) => element.productId == producto.id);
+                      (element) => element.productId == producto.documentId);
+                });
+              } else {
+                setState(() {
+                  int index = detalle.toList().indexWhere(
+                      (element) => element.productId == detalleitem.productId);
+                  detalle[index] = detalleitem;
+                  valorTotal(detalle);
                 });
               }
-              setState(() {
-                detalle[detalle.indexWhere(
-                        (element) => element.productId == detalleitem.id)] =
-                    detalleitem;
-                //print(detalle);
-              });
-
-              print(detalle);
             },
           ),
         ),
-        Container(
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(left: 120),
-          height: 70,
-          width: 400,
-          color: Colors.grey[200],
-          child: Row(
-            children: <Widget>[
-              Text(
-                'Total: \$${valorTotal(detalle)}',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.0,
-                    color: Colors.black),
-              )
-            ],
-          ),
-        ),
+        pagoTotal(detalle),
         ElevatedButton(
           onPressed: () {
+            detalle.map((e) => print(e.productId + e.totalproducto.toString()));
             Navigator.of(context).pushNamed(
               resumenPagoRoute,
               arguments: detalle,

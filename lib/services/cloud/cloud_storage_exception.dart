@@ -3,6 +3,8 @@ class CloudStorageException implements Exception {
 }
 
 // C in CRUD
+class CouldNotCreateProductImageException extends CloudStorageException {}
+
 class CouldNotCreateProductException extends CloudStorageException {}
 
 // R in CRUD

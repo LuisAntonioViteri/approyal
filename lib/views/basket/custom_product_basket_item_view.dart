@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class ProductListCard extends StatefulWidget {
   final String name;
-  final String imageUrl;
+  final Uint8List imageUrl;
   final double price;
   final Function(int) onQuantityChanged; // New parameter
 
@@ -31,7 +33,7 @@ class _ProductListCardState extends State<ProductListCard> {
             SizedBox(
               width: 100.0,
               height: 100.0,
-              child: Image.network(widget.imageUrl),
+              child: Image.memory(widget.imageUrl),
             ),
             Expanded(
               child: Padding(
