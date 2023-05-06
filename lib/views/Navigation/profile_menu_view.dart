@@ -53,17 +53,18 @@ class ProfileMenuView extends StatelessWidget {
               const Divider(),
 
               ListTile(
-                  title: const Text(
-                    'Historial de Ventas',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  trailing: const Icon(
-                    Icons.shop,
-                    size: 30.0,
-                    color: Colors.black,
-                  ),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => (const FormaPago())))),
+                title: const Text(
+                  'Historial de Ventas',
+                  style: TextStyle(color: Colors.black),
+                ),
+                trailing: const Icon(
+                  Icons.shop,
+                  size: 30.0,
+                  color: Colors.black,
+                ),
+                onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                    historialOrdenesRoute, (route) => false),
+              ),
               const Divider(),
 
               ListTile(

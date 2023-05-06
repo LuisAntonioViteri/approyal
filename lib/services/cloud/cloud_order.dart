@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 class CloudOrder {
   final String documentId;
   final String userId;
+  final String detallepagoId;
   final DateTime fechaemision;
   final double preciocompra;
   final double iva;
@@ -18,6 +19,7 @@ class CloudOrder {
   const CloudOrder({
     required this.documentId,
     required this.userId,
+    required this.detallepagoId,
     required this.fechaemision,
     required this.preciocompra,
     required this.iva,
@@ -31,6 +33,7 @@ class CloudOrder {
   CloudOrder.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : documentId = snapshot.id,
         userId = snapshot.data()[orderUserId] as String,
+        detallepagoId = snapshot.data()[orderDetallePagoId] as String,
         fechaemision = snapshot.data()[orderDateField] as DateTime,
         preciocompra = snapshot.data()[orderPrecioCompraField] as double,
         iva = snapshot.data()[orderIvaField] as double,

@@ -1,8 +1,11 @@
 import 'package:approyal/constants/routes.dart';
 import 'package:approyal/services/services/auth/auth_service.dart';
 import 'package:approyal/views/Navigation/profile_menu_view.dart';
+import 'package:approyal/views/OrdersHist/historial_ordenes_view.dart';
 import 'package:approyal/views/Pago/cheque_directo_view.dart';
+import 'package:approyal/views/Pago/contrato_anual_view.dart';
 import 'package:approyal/views/Pago/credito_directo_view.dart';
+import 'package:approyal/views/Pago/detalle_tarjeta_view.dart';
 import 'package:approyal/views/Pago/forma_pago_view.dart';
 import 'package:approyal/views/Pago/tarjeta_credito_view.dart';
 import 'package:approyal/views/basket/pedido_lista.dart';
@@ -17,26 +20,28 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
-      routes: {
-        // each route is defined as a constant in /constants/routes
-        loginRoute: (context) => const LoginView(),
-        registerRoute: (context) => const RegisterView(),
-        productsRoute: (context) => const ProductsView(),
-        verifyEmailRoute: (context) => const VerifyEmailView(),
-        profileMenuRoute: (context) => const ProfileMenuView(),
-        createOrUpdateProductRoute: (context) => const CreateUpdateNoteView(),
-        carritoRoute: (context) => const CartView(),
-        resumenPagoRoute: (context) => const FormaPago(),
-        chequeRoute: (context) => const ChequeDirecto(),
-        creditoRoute: (context) => const CreditoDirecto(),
-        tarjetaCreditoRoute: (constext) => const TarjetaCredito(),
-      },
-    ),
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
+        routes: {
+          // each route is defined as a constant in /constants/routes
+          loginRoute: (context) => const LoginView(),
+          registerRoute: (context) => const RegisterView(),
+          productsRoute: (context) => const ProductsView(),
+          verifyEmailRoute: (context) => const VerifyEmailView(),
+          profileMenuRoute: (context) => const ProfileMenuView(),
+          createOrUpdateProductRoute: (context) => const CreateUpdateNoteView(),
+          carritoRoute: (context) => const CartView(),
+          resumenPagoRoute: (context) => const FormaPago(),
+          chequeRoute: (context) => const ChequeDirecto(),
+          creditoRoute: (context) => const CreditoDirecto(),
+          tarjetaCreditoRoute: (constext) => const TarjetaCredito(),
+          contratoCreditoRoute: (context) => const TasaAnual(),
+          detalleTcRoute: (context) => const detalle_tc(),
+          historialOrdenesRoute: (context) => const ContVentas()
+        }),
   );
 }
 

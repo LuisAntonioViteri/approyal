@@ -100,7 +100,7 @@ class _CartViewState extends State<CartView> {
                 cantidad: quantity.toDouble(),
                 totalproducto: quantity * producto.price,
               );
-              if (quantity == 0) {
+              if (quantity <= 0) {
                 setState(() {
                   cart.remove(producto);
                   detalle.removeWhere(

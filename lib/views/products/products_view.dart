@@ -15,6 +15,7 @@ class ProductsView extends StatefulWidget {
 class _ProductsViewState extends State<ProductsView> {
   late final FirebaseCloudStorage _productService;
   String get userId => AuthService.firebase().currentUser!.id;
+
   List<CloudProduct?> _carritoCompras = [];
 
   @override
@@ -70,7 +71,7 @@ class _ProductsViewState extends State<ProductsView> {
                 }
               },
             ),
-          )
+          ),
           //IconButton(onPressed: onPressed, icon: const Icon(Icons.cart),);
         ],
       ),
@@ -103,5 +104,7 @@ class _ProductsViewState extends State<ProductsView> {
     );
   }
 }
+
+
 
 // Show logout dialog confirmation and returns a boolean

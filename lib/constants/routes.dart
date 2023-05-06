@@ -9,3 +9,6 @@ const chequeRoute = '/pago/cheque/';
 const creditoRoute = 'pago/credito/';
 const resumenPagoRoute = '/pago/resumen/';
 const carritoRoute = '/carrito/';
+const contratoCreditoRoute = '/pago/credito/contrato';
+const detalleTcRoute = '/pago/tc/detalle';
+const historialOrdenesRoute = '/historial/ordenes';
